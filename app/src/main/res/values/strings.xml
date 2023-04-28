@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">second34_2</string>
+    <string name="new_el">Добавить</string>
+    <string name="cancel">отмена</string>
+    <string name="commit">подтверждение</string>
+    <string name="inputTitle">Укажите значение</string>
+    <string name="inputFaculty">наименование факультета</string>
+    <string name="inputGroup">номер группы</string>
+    <string name="firstName">Фамилия</string>
+    <string name="name">Имя</string>
+    <string name="lastName">Отчество</string>
+    <string name="Phone">Телефон</string>
+    <string name="birthday">День рождения</string>
+    <string name="entryPhone">Введите номер</string>
+    <string name="entryFirstName">Введите фамилию</string>
+    <string name="entryName">Введите имя</string>
+    <string name="entryLastName">Введите отчество</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
