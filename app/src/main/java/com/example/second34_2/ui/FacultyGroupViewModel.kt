@@ -9,10 +9,10 @@ import java.util.UUID
 class FacultyGroupViewModel : ViewModel() {
     var faculty: MutableLiveData<Faculty?> = MutableLiveData()
     private lateinit var _facultyID: UUID
-    fun setFaculty(facultyID: UUID) {
+   /* fun setFaculty(facultyID: UUID) {
         _facultyID = facultyID
         FacultyRepository.get().university.observeForever {
             faculty.postValue(it.find { it.id == _facultyID })
         }
-    }
+    }*/
 }

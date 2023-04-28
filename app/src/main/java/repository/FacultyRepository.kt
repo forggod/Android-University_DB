@@ -31,8 +31,15 @@ class FacultyRepository private constructor() {
         UniversityDatabase::class.java, "uniDB.db"
     ).build()
 
+    val universityDao = db.getDao()
 
-    fun newFaculty(name: String) {
+    fun newFaculty(name: String){
+        val faculty = Faculty(id=-1, name=name)
+        universityDao.insertNewFaculty(faculty)
+        university.postValue(universityDao.loadFaculty())
+    }
+
+    /*fun newFaculty(name: String) {
         val faculty = Faculty(name = name)
         val list: ArrayList<Faculty> =
             if (university.value != null) {
@@ -99,5 +106,6 @@ class FacultyRepository private constructor() {
         group.student = list
         university.postValue(u)
     }
-/*
+     */
+
 }

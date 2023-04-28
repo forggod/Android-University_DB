@@ -43,7 +43,7 @@ class StudentFragment : Fragment() {
     //   private var selectedDate = GregorianCalendar()
     private lateinit var viewModel: StudentViewModel
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+  /*  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (student != null) {
             binding.editTextTextPersonNameFirstName.setText(student!!.firstname)
@@ -67,7 +67,7 @@ class StudentFragment : Fragment() {
                  set(GregorianCalendar.DAY_OF_MONTH,dayOfMonth)
              }
          }*/
-    }
+    }*/
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -117,22 +117,24 @@ class StudentFragment : Fragment() {
                 }
                 if (student == null) {
                     student?.apply {
-                        firstname = binding.editTextTextPersonNameFirstName.text.toString()
+                     /*   firstname = binding.editTextTextPersonNameFirstName.text.toString()
                         lastname = binding.editTextTextPersonNameLastName.text.toString()
                         midlename = binding.editTextTextPersonNameName.text.toString()
                         phonenumber = binding.editTextPhone.text.toString()
                         birthdate = Date(selectedDate.time.time)
+
+                      */
                     }
-                    viewModel.newStudent(groupID!!, student!!)
+                  //  viewModel.newStudent(groupID!!, student!!)
                 } else {
                     student?.apply {
-                        firstname = binding.editTextTextPersonNameFirstName.text.toString()
+                      /*  firstname = binding.editTextTextPersonNameFirstName.text.toString()
                         lastname = binding.editTextTextPersonNameLastName.text.toString()
                         midlename = binding.editTextTextPersonNameName.text.toString()
                         phonenumber = binding.editTextPhone.text.toString()
-                        birthdate = Date(selectedDate.time.time)
+                        birthdate = Date(selectedDate.time.time) */
                     }
-                    viewModel.editStudent(groupID!!, student!!)
+                  //  viewModel.editStudent(groupID!!, student!!)
                 }
                 backPressedCallback.isEnabled = false
                 requireActivity().onBackPressedDispatcher.onBackPressed()

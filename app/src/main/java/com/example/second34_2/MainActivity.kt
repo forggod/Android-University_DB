@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity(), FacultyFragment.Callbacks,GroupList.Ca
                 builder.setPositiveButton(getString(R.string.commit)) { _, _ ->
                     val s = nameInput.text.toString()
                     if (s.isNotBlank()) {
-                        FacultyRepository.get().newGroup(GroupFragment.getFacultyID, s)
+          //              FacultyRepository.get().newGroup(GroupFragment.getFacultyID, s)
                     }
                 }
             }

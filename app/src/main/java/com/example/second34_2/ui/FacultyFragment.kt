@@ -61,7 +61,7 @@ class FacultyFragment : Fragment() {
         }
 
         override fun onClick(v: View?) {
-            callbacks?.showGroupFragment(faculty.id)
+    //        callbacks?.showGroupFragment(faculty.id)
         }
     }
 

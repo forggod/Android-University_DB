@@ -7,9 +7,9 @@ import java.util.UUID
 
 class StudentViewModel : ViewModel() {
 
-    fun newStudent(groupID: UUID, student: Student) =
+   /* fun newStudent(groupID: UUID, student: Student) =
         FacultyRepository.get().newStudent(groupID, student)
 
     fun editStudent(groupID: UUID,student: Student)=
-        FacultyRepository.get().editStudent(groupID,student)
+        FacultyRepository.get().editStudent(groupID,student)*/
 }

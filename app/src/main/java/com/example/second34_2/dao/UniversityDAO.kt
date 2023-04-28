@@ -22,21 +22,6 @@ interface UniversityDAO {
     @Update(entity = Faculty::class)
     fun updateFaculty(faculty: Faculty)
 
-    @Insert(entity = Student::class/*, onConflict = OnConflictStrategy.Replace*/)
-    fun insertNewStudent(student: Student)
-
-    @Query("DELETE FROM student WHERE id = :studentID")
-    fun deleteStudentByID(studentID: Long)
-
-    @Delete(entity = Student::class)
-    fun deleteStudent(student: Student)
-
-    @Query("SELECT * FROM student ORDER BY last_name")
-    fun loadStudent(): List<Student>
-
-    @Update(entity = Student::class)
-    fun updateStudent(student: Student)
-
     @Insert(entity = Group::class/*, onConflict = OnConflictStrategy.Replace*/)
     fun insertNewGroup(group: Group)
 
@@ -51,4 +36,19 @@ interface UniversityDAO {
 
     @Update(entity = Group::class)
     fun updateGroup(group: Group)
+
+    @Insert(entity = Student::class/*, onConflict = OnConflictStrategy.Replace*/)
+    fun insertNewStudent(student: Student)
+
+    @Query("DELETE FROM student WHERE id = :studentID")
+    fun deleteStudentByID(studentID: Long)
+
+    @Delete(entity = Student::class)
+    fun deleteStudent(student: Student)
+
+    @Query("SELECT * FROM student ORDER BY last_name")
+    fun loadStudent(): List<Student>
+
+    @Update(entity = Student::class)
+    fun updateStudent(student: Student)
 }

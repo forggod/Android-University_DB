@@ -37,12 +37,12 @@ class GroupList(private val group: Group) : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.recycleViewGroupList.adapter = GroupListAdapter(group?.student ?: emptyList())
-    }
+    }*/
 
-    private inner class GroupHolder(view: View) : RecyclerView.ViewHolder(view),
+   /* private inner class GroupHolder(view: View) : RecyclerView.ViewHolder(view),
         View.OnClickListener {
         lateinit var student: Student
         fun bind(student: Student) {
@@ -71,10 +71,11 @@ class GroupList(private val group: Group) : Fragment() {
             lastItemView = if (lastItemView==itemView) null else itemView
         }
     }
+    */
 
     private var lastItemView: View? = null
 
-    private fun showDeleteDialog(student: Student){
+   /* private fun showDeleteDialog(student: Student){
         val builder=AlertDialog.Builder(requireContext())
         builder.setCancelable(true)
         builder.setMessage("Удалить студента ${student.lastname} ${student.firstname} ${student.midlename} из списка?")
@@ -99,7 +100,7 @@ class GroupList(private val group: Group) : Fragment() {
         override fun onBindViewHolder(holder: GroupHolder, position: Int) {
             holder.bind(items[position])
         }
-    }
+    }*/
     interface Callbacks {
         fun showStudent(groupID: UUID, student: Student?)
     }

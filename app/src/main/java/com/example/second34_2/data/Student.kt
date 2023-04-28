@@ -3,7 +3,6 @@ package com.example.second34_2.data
 import androidx.room.*
 
 @Entity(
-    tableName = "student",
     indices = [Index("last_name", "first_name", "middle_name")],
     foreignKeys = [
         ForeignKey(

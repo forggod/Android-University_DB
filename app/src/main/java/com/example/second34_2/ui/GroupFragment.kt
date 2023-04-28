@@ -44,7 +44,7 @@ class GroupFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(FacultyGroupViewModel::class.java)
         viewModel.setFaculty(_facultyID)
@@ -53,9 +53,9 @@ class GroupFragment : Fragment() {
             callbacks?.setTitle(it?.name ?: "")
         }
     }
-    private var tabPosition: Int = 0
+    private var tabPosition: Int = 0 */
 
-    private fun updateUI(Faculty: Faculty?) {
+  /*  private fun updateUI(Faculty: Faculty?) {
         binding.tabLayoutGroup.clearOnTabSelectedListeners()
         binding.tabLayoutGroup.removeAllTabs()
         for (i in 0 until (Faculty?.groups?.size ?: 0)) {
@@ -92,9 +92,9 @@ class GroupFragment : Fragment() {
                 TODO("Not yet implemented")
             }
         })
-    }
+    }*/
 
-    private inner class GroupPageAdapter(fa: FragmentActivity, private val faculty: Faculty) :
+    /* private inner class GroupPageAdapter(fa: FragmentActivity, private val faculty: Faculty) :
         FragmentStateAdapter(fa) {
         override fun getItemCount(): Int {
             return faculty.groups?.size ?: 0
@@ -103,14 +103,14 @@ class GroupFragment : Fragment() {
         override fun createFragment(position: Int): Fragment {
             return GroupList(faculty.groups?.get(position)!!)
         }
-    }
+    } */
 
     interface Callbacks {
         fun setTitle(_title: String)
         fun showStudent(groupID: UUID, student: Student?)
     }
 
-    var callbacks: Callbacks? = null
+   /* var callbacks: Callbacks? = null
     override fun onAttach(context: Context) {
         super.onAttach(context)
         callbacks = context as Callbacks
@@ -119,6 +119,6 @@ class GroupFragment : Fragment() {
     override fun onDetach() {
         callbacks = null
         super.onDetach()
-    }
+    } */
 
 }
