@@ -15,7 +15,7 @@ import androidx.room.*
 )
 
 data class Group(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int?,
     @ColumnInfo(name = "group_name") val name: String?,
     @ColumnInfo(name = "faculty_id") val facultyID: Int,
 )

@@ -5,11 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import com.example.second34_2.Second34_2Application
 import com.example.second34_2.data.*
 import com.example.second34_2.database.UniversityDatabase
-import kotlin.collections.ArrayList
-import java.util.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FacultyRepository private constructor() {
     var university: MutableLiveData<List<Faculty>> = MutableLiveData()
+    var faculty: MutableLiveData<List<Group>> = MutableLiveData()
 
     companion object {
         private var INSTANCE: FacultyRepository? = null
@@ -33,10 +36,42 @@ class FacultyRepository private constructor() {
 
     val universityDao = db.getDao()
 
-    fun newFaculty(name: String){
-        val faculty = Faculty(id=-1, name=name)
-        universityDao.insertNewFaculty(faculty)
-        university.postValue(universityDao.loadFaculty())
+    suspend fun newFaculty(name: String) {
+        val faculty = Faculty(id = null, name = name)
+        withContext(Dispatchers.IO) {
+            universityDao.insertNewFaculty(faculty)
+            university.postValue(universityDao.loadFaculty())
+        }
+    }
+
+    suspend fun loadUniversity() {
+        withContext(Dispatchers.IO) {
+            university.postValue(universityDao.loadFaculty())
+        }
+    }
+
+    suspend fun loadFacultyGroups(facultyId: Int) {
+        withContext(Dispatchers.IO) {
+            faculty.postValue(universityDao.loadFacultyGroups(facultyId))
+        }
+    }
+
+    suspend fun getFaculty(facultyId: Int): Faculty? {
+        var f: Faculty? = null
+        val job = CoroutineScope(Dispatchers.IO).launch {
+            f = universityDao.getFaculty(facultyId)
+        }
+        job.join()
+        return f
+    }
+
+    suspend fun getGroupStudents(groupId: Long): List<Student> {
+        var f: List<Student> = emptyList()
+        val job = CoroutineScope(Dispatchers.IO).launch {
+            f = universityDao.loadGroupStudents(groupId)
+        }
+        job.join()
+        return f
     }
 
     /*fun newFaculty(name: String) {

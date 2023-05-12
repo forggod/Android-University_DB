@@ -18,7 +18,7 @@ interface UniversityDAO {
 
     @Query("SELECT id, faculty_name FROM university ORDER BY faculty_name")
     fun loadFaculty(): List<Faculty>
-    
+
     @Update(entity = Faculty::class)
     fun updateFaculty(faculty: Faculty)
 
@@ -31,8 +31,17 @@ interface UniversityDAO {
     @Delete(entity = Group::class)
     fun deleteGroup(group: Group)
 
-    @Query("SELECT id, group_name FROM faculty ORDER BY group_name")
+    @Query("SELECT id, group_name, faculty_id FROM faculty ORDER BY group_name")
     fun loadGroup(): List<Group>
+
+    @Query("SELECT * FROM faculty WHERE faculty_id =:faculty_id ORDER BY group_name")
+    fun loadFacultyGroups(faculty_id: Int): List<Group>
+
+    @Query("SELECT * FROM student WHERE group_id =:groupID ORDER BY last_name")
+    fun loadGroupStudents(groupID: Long): List<Student>
+
+    @Query("SELECT id, faculty_name FROM university WHERE id=:id")
+    fun getFaculty(id: Int): Faculty
 
     @Update(entity = Group::class)
     fun updateGroup(group: Group)

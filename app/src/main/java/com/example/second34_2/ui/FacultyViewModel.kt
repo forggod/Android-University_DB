@@ -12,6 +12,6 @@ class FacultyViewModel : ViewModel() {
             university.postValue(it)
         }
     }
-    fun newFaculty(name:String)=
-        FacultyRepository.get().newFaculty(name)
+//    fun newFaculty(name:String)=
+//        FacultyRepository.get().newFaculty(name)
 }

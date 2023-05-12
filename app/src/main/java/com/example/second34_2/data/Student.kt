@@ -13,7 +13,7 @@ import androidx.room.*
     ]
 )
 data class Student(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int?,
     @ColumnInfo(name = "first_name") val firstName: String?,
     @ColumnInfo(name = "last_name") val lastName: String?,
     @ColumnInfo(name = "middle_name") val middleName: String?,

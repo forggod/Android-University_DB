@@ -11,6 +11,7 @@ import androidx.core.view.size
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.second34_2.data.Faculty
+import com.example.second34_2.data.Group
 import com.example.second34_2.data.Student
 import com.example.second34_2.databinding.FragmentGroupBinding
 import com.google.android.material.tabs.TabLayout
@@ -25,8 +26,8 @@ class GroupFragment : Fragment() {
     private val binding get() = _binding!!
 
     companion object {
-        private lateinit var _facultyID: UUID
-        fun newInstance(facultyID: UUID): GroupFragment {
+        private var _facultyID: Int = -1
+        fun newInstance(facultyID: Int): GroupFragment {
             _facultyID = facultyID
             return GroupFragment()
         }
@@ -44,7 +45,7 @@ class GroupFragment : Fragment() {
         return binding.root
     }
 
-    /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(FacultyGroupViewModel::class.java)
         viewModel.setFaculty(_facultyID)
@@ -53,46 +54,47 @@ class GroupFragment : Fragment() {
             callbacks?.setTitle(it?.name ?: "")
         }
     }
-    private var tabPosition: Int = 0 */
 
-  /*  private fun updateUI(Faculty: Faculty?) {
+    private var tabPosition: Int = 0
+
+    private fun updateUI(faculty: List<Group>) {
         binding.tabLayoutGroup.clearOnTabSelectedListeners()
         binding.tabLayoutGroup.removeAllTabs()
-        for (i in 0 until (Faculty?.groups?.size ?: 0)) {
-            binding.tabLayoutGroup.addTab(binding.tabLayoutGroup.newTab().apply {
-                text = i.toString()
-            })
-        }
 
-        binding.faBtnAddStudent.visibility=
-            if((Faculty?.groups?.size ?:0)==0)
-                View.GONE
-            else {
-                binding.faBtnAddStudent.setOnClickListener {
-                    callbacks?.showStudent(Faculty!!.groups!!.get(tabPosition).id,null)
-                }
-                View.VISIBLE
-            }
-        val adapter = GroupPageAdapter(requireActivity(), Faculty!!)
-        binding.viewPageGroups.adapter = adapter
-        TabLayoutMediator(binding.tabLayoutGroup, binding.viewPageGroups, true, true) { tab, pos ->
-            tab.text = Faculty?.groups?.get(pos)?.name
-        }.attach()
 
-        binding.tabLayoutGroup.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                tabPosition = tab?.position!!
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-                TODO("Not yet implemented")
-            }
-        })
-    }*/
+//        for (i in 0 until (Faculty?.groups?.size ?: 0)) {
+//            binding.tabLayoutGroup.addTab(binding.tabLayoutGroup.newTab().apply {
+//                text = i.toString()
+//            })
+//        }
+//
+//        binding.faBtnAddStudent.visibility =
+//            if ((Faculty?.groups?.size ?: 0) == 0)
+//                View.GONE
+//            else {
+//                binding.faBtnAddStudent.setOnClickListener {
+//                    callbacks?.showStudent(Faculty!!.groups!!.get(tabPosition).id, null)
+//                }
+//                View.VISIBLE
+//            }
+//        val adapter = GroupPageAdapter(requireActivity(), Faculty!!)
+//        binding.viewPageGroups.adapter = adapter
+//        TabLayoutMediator(binding.tabLayoutGroup, binding.viewPageGroups, true, true) { tab, pos ->
+//            tab.text = Faculty?.groups?.get(pos)?.name
+//        }.attach()
+//
+//        binding.tabLayoutGroup.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+//            override fun onTabSelected(tab: TabLayout.Tab?) {
+//                tabPosition = tab?.position!!
+//            }
+//
+//            override fun onTabReselected(tab: TabLayout.Tab?) {
+//            }
+//
+//            override fun onTabUnselected(tab: TabLayout.Tab?) {
+//            }
+//        })
+    }
 
     /* private inner class GroupPageAdapter(fa: FragmentActivity, private val faculty: Faculty) :
         FragmentStateAdapter(fa) {
@@ -110,15 +112,15 @@ class GroupFragment : Fragment() {
         fun showStudent(groupID: UUID, student: Student?)
     }
 
-   /* var callbacks: Callbacks? = null
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        callbacks = context as Callbacks
-    }
+    /* var callbacks: Callbacks? = null
+     override fun onAttach(context: Context) {
+         super.onAttach(context)
+         callbacks = context as Callbacks
+     }
 
-    override fun onDetach() {
-        callbacks = null
-        super.onDetach()
-    } */
+     override fun onDetach() {
+         callbacks = null
+         super.onDetach()
+     } */
 
 }

@@ -13,10 +13,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentTransaction
 import com.example.second34_2.data.Student
 import com.example.second34_2.ui.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import repository.FacultyRepository
 import java.util.*
 
-class MainActivity : AppCompatActivity(), FacultyFragment.Callbacks,GroupList.Callbacks, GroupFragment.Callbacks {
+class MainActivity : AppCompatActivity(), FacultyFragment.Callbacks, GroupList.Callbacks,
+    GroupFragment.Callbacks {
     private var miNewFaculty: MenuItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +59,7 @@ class MainActivity : AppCompatActivity(), FacultyFragment.Callbacks,GroupList.Ca
                     showNameInputDialog(1)
                 true
             }
+
             else -> return super.onOptionsItemSelected(item)
         }
     }
@@ -73,16 +78,19 @@ class MainActivity : AppCompatActivity(), FacultyFragment.Callbacks,GroupList.Ca
                 builder.setPositiveButton(getString(R.string.commit)) { _, _ ->
                     val s = nameInput.text.toString()
                     if (s.isNotBlank()) {
-                        FacultyRepository.get().newFaculty(s)
+                        CoroutineScope(Dispatchers.Main).launch {
+                            FacultyRepository.get().newFaculty(s)
+                        }
                     }
                 }
             }
+
             1 -> {
                 tvInfo.text = getString(R.string.inputGroup)
                 builder.setPositiveButton(getString(R.string.commit)) { _, _ ->
                     val s = nameInput.text.toString()
                     if (s.isNotBlank()) {
-          //              FacultyRepository.get().newGroup(GroupFragment.getFacultyID, s)
+                        //              FacultyRepository.get().newGroup(GroupFragment.getFacultyID, s)
                     }
                 }
             }
@@ -97,21 +105,32 @@ class MainActivity : AppCompatActivity(), FacultyFragment.Callbacks,GroupList.Ca
         title = _title
     }
 
-    override fun showStudent(groupID: UUID,student: Student?) {
+    override fun showStudent(groupID: UUID, student: Student?) {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.frameMain, StudentFragment.newInstance(groupID,student), STUDENT_TAG)
+            .replace(R.id.frameMain, StudentFragment.newInstance(groupID, student), STUDENT_TAG)
             .addToBackStack(null)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .commit()
     }
 
-    override fun showGroupFragment(FacultyID: UUID) {
+    override fun showGroupFragment(FacultyID: Int) {
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.frameMain, GroupFragment.newInstance(FacultyID), FACULTY_TAG)
             .addToBackStack(null)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .commit()
+    }
+
+    override fun onStop() {
+        super.onStop()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        CoroutineScope(Dispatchers.Main).launch {
+            FacultyRepository.get().loadUniversity()
+        }
     }
 }
