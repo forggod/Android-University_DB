@@ -49,6 +49,9 @@ interface UniversityDAO {
     @Insert(entity = Student::class/*, onConflict = OnConflictStrategy.Replace*/)
     fun insertNewStudent(student: Student)
 
+    @Query("SELECT * FROM student WHERE id =:id")
+    fun getStudentByID(id: Int) :Student
+
     @Query("DELETE FROM student WHERE id = :studentID")
     fun deleteStudentByID(studentID: Long)
 

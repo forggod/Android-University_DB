@@ -17,7 +17,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import repository.FacultyRepository
-import java.util.*
 
 class MainActivity : AppCompatActivity(), FacultyFragment.Callbacks, GroupList.Callbacks,
     GroupFragment.Callbacks {
@@ -90,7 +89,9 @@ class MainActivity : AppCompatActivity(), FacultyFragment.Callbacks, GroupList.C
                 builder.setPositiveButton(getString(R.string.commit)) { _, _ ->
                     val s = nameInput.text.toString()
                     if (s.isNotBlank()) {
-                        //              FacultyRepository.get().newGroup(GroupFragment.getFacultyID, s)
+                        CoroutineScope(Dispatchers.Main).launch {
+                            FacultyRepository.get().newGroup(GroupFragment.getFacultyID, s)
+                        }
                     }
                 }
             }
@@ -105,7 +106,7 @@ class MainActivity : AppCompatActivity(), FacultyFragment.Callbacks, GroupList.C
         title = _title
     }
 
-    override fun showStudent(groupID: UUID, student: Student?) {
+    override fun showStudent(groupID: Int, student: Student?) {
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.frameMain, StudentFragment.newInstance(groupID, student), STUDENT_TAG)
@@ -117,7 +118,7 @@ class MainActivity : AppCompatActivity(), FacultyFragment.Callbacks, GroupList.C
     override fun showGroupFragment(FacultyID: Int) {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.frameMain, GroupFragment.newInstance(FacultyID), FACULTY_TAG)
+            .replace(R.id.frameMain, GroupFragment.newInstance(FacultyID), GROUP_TAG)
             .addToBackStack(null)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .commit()

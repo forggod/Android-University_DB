@@ -17,7 +17,7 @@ data class Student(
     @ColumnInfo(name = "first_name") val firstName: String?,
     @ColumnInfo(name = "last_name") val lastName: String?,
     @ColumnInfo(name = "middle_name") val middleName: String?,
-    val phone: String?,
+    var phone: String?,
     @ColumnInfo(name = "birth_date") val birthDate: Long?,
     @ColumnInfo(name = "group_id") val groupId: Int,
 )

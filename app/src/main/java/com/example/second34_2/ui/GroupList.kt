@@ -102,7 +102,7 @@ class GroupList(private val group: Group) : Fragment() {
         }
     }*/
     interface Callbacks {
-        fun showStudent(groupID: UUID, student: Student?)
+        fun showStudent(groupID: Int, student: Student?)
     }
 
     var callbacks: Callbacks? = null

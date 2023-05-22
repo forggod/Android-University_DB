@@ -13,6 +13,10 @@ import androidx.appcompat.app.AlertDialog
 import com.example.second34_2.data.Student
 import com.example.second34_2.R
 import com.example.second34_2.databinding.FragmentStudentBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import repository.FacultyRepository
 import java.util.*
 
 const val STUDENT_TAG = "StudentFragment"
@@ -24,8 +28,8 @@ class StudentFragment : Fragment() {
 
     companion object {
         private var student: Student? = null
-        private var groupID: UUID? = null
-        fun newInstance(groupID: UUID, student: Student?): StudentFragment {
+        private var groupID: Int? = null
+        fun newInstance(groupID: Int, student: Student?): StudentFragment {
             this.student = student
             this.groupID = groupID
             return StudentFragment()
@@ -40,34 +44,35 @@ class StudentFragment : Fragment() {
         return binding.root
     }
 
-    //   private var selectedDate = GregorianCalendar()
+    private var selectedDate = GregorianCalendar()
     private lateinit var viewModel: StudentViewModel
 
-  /*  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (student != null) {
-            binding.editTextTextPersonNameFirstName.setText(student!!.firstname)
-            binding.editTextTextPersonNameName.setText(student!!.midlename)
-            binding.editTextTextPersonNameLastName.setText(student!!.lastname)
-            binding.editTextPhone.setText(student!!.phonenumber)
-            val dt = GregorianCalendar().apply {
-                time = student!!.birthdate
+            binding.editTextTextPersonNameFirstName.setText(student!!.firstName)
+            binding.editTextTextPersonNameName.setText(student!!.middleName)
+            binding.editTextTextPersonNameLastName.setText(student!!.lastName)
+            binding.editTextPhone.setText(student!!.phone)
+            val date = GregorianCalendar.getInstance()
+            date.time.time = student!!.birthDate!!
 
-            }
             binding.calendarID.init(
-                dt.get(Calendar.YEAR), dt.get(Calendar.MONTH),
-                dt.get(Calendar.DAY_OF_MONTH), null
+                date.get(Calendar.YEAR), date.get(Calendar.MONTH),
+                date.get(Calendar.DAY_OF_MONTH), null
             )
         }
         viewModel = ViewModelProvider(this).get(StudentViewModel::class.java)
-        /* binding.calendarViewBirthDate.setOnDateChangeListener{_ ,year, month, dayOfMonth ->
-             selectedDate.apply {
-                 set(GregorianCalendar.YEAR,year)
-                 set(GregorianCalendar.MONTH,month)
-                 set(GregorianCalendar.DAY_OF_MONTH,dayOfMonth)
-             }
-         }*/
-    }*/
+
+        binding.calendarID.setOnDateChangedListener { _, year, monthOfYear, dayOfMonth ->
+            selectedDate.apply {
+                set(GregorianCalendar.YEAR, year)
+                set(GregorianCalendar.MONTH, monthOfYear)
+                set(GregorianCalendar.DAY_OF_MONTH, dayOfMonth)
+            }
+            val date = Date(selectedDate.time.time)
+        }
+    }
 
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -115,27 +120,26 @@ class StudentFragment : Fragment() {
                     set(GregorianCalendar.YEAR, binding.calendarID.month)
                     set(GregorianCalendar.YEAR, binding.calendarID.dayOfMonth)
                 }
+                val firstName = binding.editTextTextPersonNameFirstName.text.toString()
+                val lastName = binding.editTextTextPersonNameLastName.text.toString()
+                val middleName = binding.editTextTextPersonNameName.text.toString()
+                val phone = binding.editTextPhone.text.toString()
+                val date = selectedDate.time.time
                 if (student == null) {
-                    student?.apply {
-                     /*   firstname = binding.editTextTextPersonNameFirstName.text.toString()
-                        lastname = binding.editTextTextPersonNameLastName.text.toString()
-                        midlename = binding.editTextTextPersonNameName.text.toString()
-                        phonenumber = binding.editTextPhone.text.toString()
-                        birthdate = Date(selectedDate.time.time)
-
-                      */
+                    CoroutineScope(Dispatchers.Main).launch {
+                        FacultyRepository.get()
+                            .newStudent(groupID!!, firstName, lastName, middleName, phone, date)
                     }
-                  //  viewModel.newStudent(groupID!!, student!!)
                 } else {
-                    student?.apply {
-                      /*  firstname = binding.editTextTextPersonNameFirstName.text.toString()
-                        lastname = binding.editTextTextPersonNameLastName.text.toString()
-                        midlename = binding.editTextTextPersonNameName.text.toString()
-                        phonenumber = binding.editTextPhone.text.toString()
-                        birthdate = Date(selectedDate.time.time) */
-                    }
-                  //  viewModel.editStudent(groupID!!, student!!)
+//                    CoroutineScope(Dispatchers.Main).launch {
+//                        FacultyRepository.get()
+//                            .editStudent(groupID!!, firstName, lastName, middleName, phone, date)
+//                    }
                 }
+                backPressedCallback.isEnabled = false
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+            }
+            builder.setNegativeButton("Отмена") { _, _ ->
                 backPressedCallback.isEnabled = false
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             }
