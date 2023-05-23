@@ -1,15 +1,25 @@
 package repository
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.room.Room
 import androidx.lifecycle.MutableLiveData
 import com.example.second34_2.Second34_2Application
+import com.example.second34_2.api.ServerAPI
 import com.example.second34_2.data.*
 import com.example.second34_2.database.UniversityDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.UUID
+import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.awaitResponse
+import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 class FacultyRepository private constructor() {
     var university: MutableLiveData<List<Faculty>> = MutableLiveData()
@@ -104,6 +114,89 @@ class FacultyRepository private constructor() {
             universityDao.insertNewStudent(student)
         }
     }
+
+    private var myServerAPI: ServerAPI? = null
+
+    private val client = OkHttpClient.Builder()
+        .connectTimeout(15, TimeUnit.SECONDS)
+        .readTimeout(15, TimeUnit.SECONDS)
+        .writeTimeout(15, TimeUnit.SECONDS)
+        .build()
+
+    private fun getAPI() {
+        val url = "127.0.0.1:5050"
+        Retrofit.Builder()
+            .baseUrl("http://${url}")
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build().apply {
+                myServerAPI = create(ServerAPI::class.java)
+            }
+    }
+
+    fun getFaculty() {
+        if (myServerAPI == null)
+            getAPI()
+        if (myServerAPI != null) {
+            val request = myServerAPI!!.getFaculty()
+            request.enqueue(object : Callback<Faculties> {
+                override fun onFailure(call: Call<Faculties>, t: Throwable) {
+                    Log.d(TAG, "Ошибка получения истории студентов", t)
+                }
+
+                override fun onResponse(
+                    call: Call<Faculties>,
+                    response: Response<Faculties>
+                ) {
+                    Log.e(TAG, "Получение истории студентов")
+                    val faculties = response.body()
+                    val facultyList = faculties?.items
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val job = CoroutineScope(Dispatchers.IO).launch {
+                            universityDao.deleteAllFaculty()
+                        }
+                        job.join()
+                        if (facultyList != null) {
+                            for (f in facultyList) {
+                                universityDao.insertNewFaculty(f)
+                            }
+                        }
+                        loadUniversity()
+                    }
+                }
+            })
+        }
+    }
+
+    fun getServerFaculty() {
+        if (myServerAPI == null) getAPI()
+        CoroutineScope(Dispatchers.Main).launch {
+            fetchFaculty()
+        }
+    }
+
+    private suspend fun fetchFaculty() {
+        if (myServerAPI != null) {
+            val job = CoroutineScope(Dispatchers.IO).launch {
+                val r = myServerAPI!!.getFaculty().awaitResponse()
+                if (r.isSuccessful) {
+                    val job = CoroutineScope(Dispatchers.IO).launch {
+                        universityDao.deleteAllFaculty()
+                    }
+                    job.join()
+                    val faculties = r.body()
+                    val facultyList = faculties?.items
+                    if (facultyList != null) {
+                        for (f in facultyList) {
+                            universityDao.insertNewFaculty(f)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
 //    suspend fun editStudent(
 //        groupID: Int,

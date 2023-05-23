@@ -1,6 +1,7 @@
 package com.example.second34_2.data
 
 import androidx.room.*
+import androidx.room.ForeignKey.Companion.CASCADE
 
 @Entity(
     tableName = "faculty",
@@ -10,6 +11,7 @@ import androidx.room.*
             entity = Faculty::class,
             parentColumns = ["id"],
             childColumns = ["faculty_id"],
+            onDelete = CASCADE
         )
     ]
 )
