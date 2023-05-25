@@ -130,7 +130,8 @@ class StudentFragment : Fragment() {
                         FacultyRepository.get()
                             .newStudent(groupID!!, firstName, lastName, middleName, phone, date)
                     }
-                } else {
+                }
+                if (student != null){
                     val studentNew = Student(
                         id = student!!.id,
                         groupId = student!!.groupId,
@@ -142,7 +143,7 @@ class StudentFragment : Fragment() {
                     )
                     CoroutineScope(Dispatchers.Main).launch {
                         FacultyRepository.get()
-                            .editStudent(student!!)
+                            .editStudent(studentNew)
                     }
                 }
                 backPressedCallback.isEnabled = false

@@ -102,7 +102,11 @@ class GroupList(private val group: Group) : Fragment() {
         builder.setMessage("Удалить студента ${student.lastName} ${student.firstName} ${student.middleName} из списка?")
         builder.setTitle("Подтверждение")
         builder.setPositiveButton(getString(R.string.commit)) { _, _ ->
-            viewModel.deleteStudent(student)
+            GlobalScope.launch {
+                withContext(Dispatchers.Main) {
+                    viewModel.deleteStudent(student)
+                }
+            }
         }
         builder.setNegativeButton("Отмена", null)
         val alert = builder.create()

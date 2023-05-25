@@ -115,6 +115,8 @@ class FacultyRepository private constructor() {
         }
     }
     suspend fun editStudent(student: Student){
+        Log.d("EDIT_STD", "${student.id} ${student.groupId} ${student.firstName} ${student.middleName} ${student.lastName} " +
+                "${student.phone} ${student.birthDate}")
         withContext(Dispatchers.IO){
             universityDao.updateStudent(student)
         }

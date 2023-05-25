@@ -64,6 +64,6 @@ interface UniversityDAO {
     @Query("SELECT * FROM student ORDER BY last_name")
     fun loadStudent(): List<Student>
 
-    @Update(entity = Student::class)
+    @Update
     fun updateStudent(student: Student)
 }
