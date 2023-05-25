@@ -90,6 +90,11 @@ class GroupFragment : Fragment() {
             tab.text = groups?.get(pos)?.name
         }.attach()
 
+        if (tabPosition < binding.tabLayoutGroup.tabCount) {
+            binding.tabLayoutGroup.setScrollPosition(tabPosition, 0f, true)
+            binding.viewPageGroups.currentItem = tabPosition
+        }
+
         binding.tabLayoutGroup.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 tabPosition = tab?.position!!

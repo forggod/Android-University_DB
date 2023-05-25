@@ -84,7 +84,7 @@ class FacultyRepository private constructor() {
         return f
     }
 
-    suspend fun getGroupStudents(groupId: Long): List<Student> {
+    suspend fun getGroupStudents(groupId: Int): List<Student> {
         var f: List<Student> = emptyList()
         val job = CoroutineScope(Dispatchers.IO).launch {
             f = universityDao.loadGroupStudents(groupId)
@@ -112,6 +112,11 @@ class FacultyRepository private constructor() {
         )
         withContext(Dispatchers.IO) {
             universityDao.insertNewStudent(student)
+        }
+    }
+    suspend fun editStudent(student: Student){
+        withContext(Dispatchers.IO){
+            universityDao.updateStudent(student)
         }
     }
 
@@ -143,7 +148,6 @@ class FacultyRepository private constructor() {
                 override fun onFailure(call: Call<Faculties>, t: Throwable) {
                     Log.d(TAG, "Ошибка получения истории студентов", t)
                 }
-
                 override fun onResponse(
                     call: Call<Faculties>,
                     response: Response<Faculties>
@@ -151,7 +155,6 @@ class FacultyRepository private constructor() {
                     Log.e(TAG, "Получение истории студентов")
                     val faculties = response.body()
                     val facultyList = faculties?.items
-
                     CoroutineScope(Dispatchers.IO).launch {
                         val job = CoroutineScope(Dispatchers.IO).launch {
                             universityDao.deleteAllFaculty()

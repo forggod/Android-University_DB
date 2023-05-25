@@ -35,7 +35,4 @@ class FacultyGroupViewModel : ViewModel() {
         job.join()
         return f
     }
-
-    /*fun deleteStudent(groupID: UUID, student: Student)=
-        FacultyRepository.get().deleteStudent(groupID,student)*/
 }

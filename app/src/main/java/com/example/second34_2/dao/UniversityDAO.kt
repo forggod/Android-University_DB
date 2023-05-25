@@ -10,6 +10,9 @@ interface UniversityDAO {
     @Insert(entity = Faculty::class/*, onConflict = OnConflictStrategy.Replace*/)
     fun insertNewFaculty(faculty: Faculty)
 
+    @Query("DELETE FROM university")
+    fun deleteAllFaculty()
+
     @Query("DELETE FROM university WHERE id = :facultyID")
     fun deleteFacultyByID(facultyID: Long)
 
@@ -38,7 +41,7 @@ interface UniversityDAO {
     fun loadFacultyGroups(faculty_id: Int): List<Group>
 
     @Query("SELECT * FROM student WHERE group_id =:groupID ORDER BY last_name")
-    fun loadGroupStudents(groupID: Long): List<Student>
+    fun loadGroupStudents(groupID: Int): List<Student>
 
     @Query("SELECT id, faculty_name FROM university WHERE id=:id")
     fun getFaculty(id: Int): Faculty
@@ -50,7 +53,7 @@ interface UniversityDAO {
     fun insertNewStudent(student: Student)
 
     @Query("SELECT * FROM student WHERE id =:id")
-    fun getStudentByID(id: Int) :Student
+    fun getStudentByID(id: Int): Student
 
     @Query("DELETE FROM student WHERE id = :studentID")
     fun deleteStudentByID(studentID: Long)

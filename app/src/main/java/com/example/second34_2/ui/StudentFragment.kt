@@ -131,20 +131,29 @@ class StudentFragment : Fragment() {
                             .newStudent(groupID!!, firstName, lastName, middleName, phone, date)
                     }
                 } else {
-//                    CoroutineScope(Dispatchers.Main).launch {
-//                        FacultyRepository.get()
-//                            .editStudent(groupID!!, firstName, lastName, middleName, phone, date)
-//                    }
+                    val studentNew = Student(
+                        id = student!!.id,
+                        groupId = student!!.groupId,
+                        firstName = firstName,
+                        lastName = lastName,
+                        middleName = middleName,
+                        phone = phone,
+                        birthDate = date
+                    )
+                    CoroutineScope(Dispatchers.Main).launch {
+                        FacultyRepository.get()
+                            .editStudent(student!!)
+                    }
                 }
                 backPressedCallback.isEnabled = false
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             }
-            builder.setNegativeButton("Отмена") { _, _ ->
-                backPressedCallback.isEnabled = false
-                requireActivity().onBackPressedDispatcher.onBackPressed()
-            }
-            val alert = builder.create()
-            alert.show()
         }
+        builder.setNegativeButton("Отмена") { _, _ ->
+            backPressedCallback.isEnabled = false
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+        val alert = builder.create()
+        alert.show()
     }
 }
