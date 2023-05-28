@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -114,42 +115,56 @@ class FacultyRepository private constructor() {
             universityDao.insertNewStudent(student)
         }
     }
-    suspend fun editStudent(student: Student){
-        Log.d("EDIT_STD", "${student.id} ${student.groupId} ${student.firstName} ${student.middleName} ${student.lastName} " +
-                "${student.phone} ${student.birthDate}")
-        withContext(Dispatchers.IO){
+
+    suspend fun editStudent(student: Student) {
+        Log.d(
+            "EDIT_STD",
+            "${student.id} ${student.groupId} ${student.firstName} ${student.middleName} ${student.lastName} " +
+                    "${student.phone} ${student.birthDate}"
+        )
+        withContext(Dispatchers.IO) {
             universityDao.updateStudent(student)
         }
     }
 
     private var myServerAPI: ServerAPI? = null
 
-    private val client = OkHttpClient.Builder()
-        .connectTimeout(15, TimeUnit.SECONDS)
-        .readTimeout(15, TimeUnit.SECONDS)
-        .writeTimeout(15, TimeUnit.SECONDS)
-        .build()
 
     private fun getAPI() {
-        val url = "127.0.0.1:5050"
-        Retrofit.Builder()
-            .baseUrl("http://${url}")
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build().apply {
-                myServerAPI = create(ServerAPI::class.java)
-            }
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.level = HttpLoggingInterceptor.Level.BODY
+
+        val client = OkHttpClient.Builder()
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(15, TimeUnit.SECONDS)
+            .writeTimeout(15, TimeUnit.SECONDS)
+            .addInterceptor(interceptor)
+            .build()
+        try {
+            val url = "192.168.202.241:5050"
+            Retrofit.Builder()
+                .baseUrl("http://${url}/faculty/")
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build().apply {
+                    myServerAPI = create(ServerAPI::class.java)
+                }
+        } catch (e: Exception) {
+            Log.d("EX", "Возникло исключение $e")
+        }
     }
 
     fun getFaculty() {
         if (myServerAPI == null)
             getAPI()
         if (myServerAPI != null) {
+
             val request = myServerAPI!!.getFaculty()
             request.enqueue(object : Callback<Faculties> {
                 override fun onFailure(call: Call<Faculties>, t: Throwable) {
                     Log.d(TAG, "Ошибка получения истории студентов", t)
                 }
+
                 override fun onResponse(
                     call: Call<Faculties>,
                     response: Response<Faculties>

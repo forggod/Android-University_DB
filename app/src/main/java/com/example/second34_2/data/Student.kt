@@ -9,6 +9,7 @@ import androidx.room.*
             entity = Group::class,
             parentColumns = ["id"],
             childColumns = ["group_id"],
+            onDelete = ForeignKey.CASCADE
         )
     ]
 )
