@@ -94,6 +94,12 @@ class FacultyRepository private constructor() {
         return f
     }
 
+    suspend fun deleteFaculty(facultyId: Int){
+        withContext(Dispatchers.IO){
+            universityDao.deleteFacultyByID(facultyId)
+        }
+    }
+
     suspend fun newStudent(
         groupID: Int,
         firstName: String,

@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity(), FacultyFragment.Callbacks, GroupList.C
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        FacultyRepository.get().getFaculty()
 
         supportFragmentManager
             .beginTransaction()
@@ -57,6 +56,12 @@ class MainActivity : AppCompatActivity(), FacultyFragment.Callbacks, GroupList.C
                     showNameInputDialog(0)
                 else
                     showNameInputDialog(1)
+                true
+            }
+            R.id.miSync ->{
+                val myFragment = supportFragmentManager.findFragmentByTag(GROUP_TAG)
+                if (myFragment == null)
+                    FacultyRepository.get().getFaculty()
                 true
             }
 

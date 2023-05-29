@@ -14,7 +14,7 @@ interface UniversityDAO {
     fun deleteAllFaculty()
 
     @Query("DELETE FROM university WHERE id = :facultyID")
-    fun deleteFacultyByID(facultyID: Long)
+    fun deleteFacultyByID(facultyID: Int)
 
     @Delete(entity = Faculty::class)
     fun deleteFaculty(faculty: Faculty)
