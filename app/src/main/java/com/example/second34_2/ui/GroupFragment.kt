@@ -67,8 +67,6 @@ class GroupFragment : Fragment() {
         binding.tabLayoutGroup.clearOnTabSelectedListeners()
         binding.tabLayoutGroup.removeAllTabs()
 
-
-
         for (i in 0 until (groups?.size ?: 0)) {
             binding.tabLayoutGroup.addTab(binding.tabLayoutGroup.newTab().apply {
                 text = i.toString()

@@ -147,7 +147,7 @@ class FacultyRepository private constructor() {
             .addInterceptor(interceptor)
             .build()
         try {
-            val url = "192.168.0.104:5050"
+            val url = "192.168.202.241:5050"
             Retrofit.Builder()
                 .baseUrl("http://${url}/faculty/")
                 .client(client)
