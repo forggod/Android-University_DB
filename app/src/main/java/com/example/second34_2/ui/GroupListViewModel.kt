@@ -15,7 +15,7 @@ import java.util.UUID
 class GroupListViewModel : ViewModel() {
     suspend fun deleteStudent(student: Student) {
         val job = CoroutineScope(Dispatchers.IO).launch {
-            FacultyRepository.get().universityDao.deleteStudent(student)
+            FacultyRepository.get().deleteStudent(student)
         }
         job.join()
     }

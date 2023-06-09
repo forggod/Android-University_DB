@@ -78,7 +78,7 @@ class FacultyFragment : Fragment() {
             builder.setMessage("Удалить факультет?")
             builder.setTitle("Подтверждение")
             builder.setPositiveButton("Удалить") { _, _ ->
-                Log.d("INFO", "Deleted student ${faculty.id}")
+                Log.d("INFO", "Deleted faculty $faculty")
                 CoroutineScope(Dispatchers.Main).launch {
                     faculty.id?.let { FacultyRepository.get().deleteFaculty(it) }
                 }

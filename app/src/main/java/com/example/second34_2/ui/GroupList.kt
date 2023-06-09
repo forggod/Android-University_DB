@@ -49,6 +49,10 @@ class GroupList(private val group: Group) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.recycleViewGroupList.adapter = GroupListAdapter(emptyList())
         viewModel = GroupListViewModel()
+        updateGroup()
+    }
+
+    private fun updateGroup() {
         GlobalScope.launch {
             withContext(Dispatchers.Main) {
                 binding.recycleViewGroupList.adapter = group.id?.let { getStudents(it) }
@@ -105,6 +109,7 @@ class GroupList(private val group: Group) : Fragment() {
             GlobalScope.launch {
                 withContext(Dispatchers.Main) {
                     viewModel.deleteStudent(student)
+                    updateGroup()
                 }
             }
         }
@@ -117,7 +122,6 @@ class GroupList(private val group: Group) : Fragment() {
         RecyclerView.Adapter<GroupHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupHolder {
             val view = layoutInflater.inflate(R.layout.layout_student_listelement, parent, false)
-
             return GroupHolder(view)
         }
 
