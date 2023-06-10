@@ -10,6 +10,7 @@ import com.example.second34_2.data.*
 import com.example.second34_2.database.UniversityDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -79,8 +80,7 @@ class FacultyRepository private constructor() {
     }
 
     fun syncUniversity() {
-        getFaculties()
-        getGroups()
+        getUniversity()
     }
 
     fun syncPost() {
@@ -98,6 +98,60 @@ class FacultyRepository private constructor() {
         }
     }
 
+    private fun getUniversity() {
+        if (myServerAPI == null)
+            getAPI()
+        if (myServerAPI != null) {
+            val requestFaculty = myServerAPI!!.getFaculty()
+            requestFaculty.enqueue(object : Callback<List<Faculty>> {
+                override fun onFailure(call: Call<List<Faculty>>, t: Throwable) {
+                    Log.d(TAG, "Ошибка получения истории факультета", t)
+                }
+
+                override fun onResponse(
+                    call: Call<List<Faculty>>,
+                    response: Response<List<Faculty>>
+                ) {
+                    Log.e(TAG, "Получение истории факультета")
+                    val facultiesList = response.body()
+                    CoroutineScope(Dispatchers.IO).launch {
+                        universityDao.deleteAllFaculty()
+                        if (facultiesList != null) {
+                            for (f in facultiesList) {
+                                universityDao.insertNewFaculty(f)
+                            }
+                        }
+                        loadUniversity()
+                    }
+                }
+            })
+            val requestGroups = myServerAPI!!.getGroups()
+            requestGroups.enqueue(object : Callback<List<Group>> {
+                override fun onFailure(call: Call<List<Group>>, t: Throwable) {
+                    Log.d(TAG, "Ошибка получения истории групп", t)
+                }
+
+                override fun onResponse(
+                    call: Call<List<Group>>,
+                    response: Response<List<Group>>
+                ) {
+                    Log.e(TAG, "Получение истории групп")
+                    val groupsList = response.body()
+                    CoroutineScope(Dispatchers.IO).launch {
+                        delay(500)
+                        universityDao.deleteAllGroups()
+                        if (groupsList != null) {
+                            for (f in groupsList) {
+                                universityDao.insertNewGroup(f)
+                            }
+                        }
+                        loadUniversity()
+                    }
+                }
+            })
+        }
+    }
+
     // *******************************************
     //              About Faculty
     // *******************************************
@@ -110,7 +164,7 @@ class FacultyRepository private constructor() {
         loadUniversity()
     }
 
-    suspend fun getFaculties(facultyId: Int): Faculty? {
+    suspend fun getUniversity(facultyId: Int): Faculty? {
         var f: Faculty? = null
         val job = CoroutineScope(Dispatchers.IO).launch {
             f = universityDao.getFaculty(facultyId)
@@ -126,39 +180,6 @@ class FacultyRepository private constructor() {
             universityDao.deleteFacultyByID(facultyId)
         }
         loadUniversity()
-    }
-
-    private fun getFaculties() {
-        if (myServerAPI == null)
-            getAPI()
-        if (myServerAPI != null) {
-            val request = myServerAPI!!.getFaculty()
-            request.enqueue(object : Callback<List<Faculty>> {
-                override fun onFailure(call: Call<List<Faculty>>, t: Throwable) {
-                    Log.d(TAG, "Ошибка получения истории факультетов", t)
-                }
-
-                override fun onResponse(
-                    call: Call<List<Faculty>>,
-                    response: Response<List<Faculty>>
-                ) {
-                    Log.e(TAG, "Получение истории факультетов")
-                    val faculties = response.body()
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val job = CoroutineScope(Dispatchers.IO).launch {
-                            universityDao.deleteAllFaculty()
-                        }
-                        job.join()
-                        if (faculties != null) {
-                            for (f in faculties) {
-                                universityDao.insertNewFaculty(f)
-                            }
-                        }
-                        loadUniversity()
-                    }
-                }
-            })
-        }
     }
 
     private fun postFaculties() {
@@ -200,39 +221,6 @@ class FacultyRepository private constructor() {
         Log.d("GET_GRP", "GET group list")
         withContext(Dispatchers.IO) {
             faculty.postValue(universityDao.loadFacultyGroups(facultyId))
-        }
-    }
-
-    private fun getGroups() {
-        if (myServerAPI == null)
-            getAPI()
-        if (myServerAPI != null) {
-            val request = myServerAPI!!.getGroups()
-            request.enqueue(object : Callback<List<Group>> {
-                override fun onFailure(call: Call<List<Group>>, t: Throwable) {
-                    Log.d(TAG, "Ошибка получения истории групп", t)
-                }
-
-                override fun onResponse(
-                    call: Call<List<Group>>,
-                    response: Response<List<Group>>
-                ) {
-                    Log.e(TAG, "Получение истории групп")
-                    val faculties = response.body()
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val job = CoroutineScope(Dispatchers.IO).launch {
-                            universityDao.deleteAllGroups()
-                        }
-                        job.join()
-                        if (faculties != null) {
-                            for (f in faculties) {
-                                universityDao.insertNewGroup(f)
-                            }
-                        }
-                        loadUniversity()
-                    }
-                }
-            })
         }
     }
 

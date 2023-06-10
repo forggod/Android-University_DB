@@ -29,7 +29,7 @@ class FacultyGroupViewModel : ViewModel() {
     suspend fun getFaculty(): Faculty? {
         var f: Faculty? = null
         val job = viewModelScope.launch {
-            f = FacultyRepository.get().getFaculties(_facultyID)
+            f = FacultyRepository.get().getUniversity(_facultyID)
         }
         job.join()
         return f

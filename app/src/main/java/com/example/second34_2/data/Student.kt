@@ -26,5 +26,5 @@ data class Student(
 
 class Students {
     @SerializedName("students")
-    lateinit var students: List<Faculty>
+    lateinit var students: List<Student>
 }

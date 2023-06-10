@@ -25,5 +25,5 @@ data class Group(
 
 class Groups {
     @SerializedName("groups")
-    lateinit var groups: List<Faculty>
+    lateinit var groups: List<Group>
 }
