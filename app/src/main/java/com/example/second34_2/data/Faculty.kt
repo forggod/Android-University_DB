@@ -9,6 +9,6 @@ data class Faculty(
     @ColumnInfo(name = "faculty_name") val name: String?,
 )
 class Faculties {
-    @SerializedName("items")
-    lateinit var items : List<Faculty>
+    @SerializedName("faculties")
+    lateinit var faculties : List<Faculty>
 }

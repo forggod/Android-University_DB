@@ -61,7 +61,13 @@ class MainActivity : AppCompatActivity(), FacultyFragment.Callbacks, GroupList.C
             R.id.miSync ->{
                 val myFragment = supportFragmentManager.findFragmentByTag(GROUP_TAG)
                 if (myFragment == null)
-                    FacultyRepository.get().getFaculty()
+                    FacultyRepository.get().syncUniversity()
+                true
+            }
+            R.id.miPost ->{
+                val myFragment = supportFragmentManager.findFragmentByTag(GROUP_TAG)
+                if (myFragment == null)
+                    FacultyRepository.get().postFaculty()
                 true
             }
 

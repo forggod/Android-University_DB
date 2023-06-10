@@ -4,6 +4,7 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.room.Room
 import androidx.lifecycle.MutableLiveData
+import com.example.second34_2.R
 import com.example.second34_2.Second34_2Application
 import com.example.second34_2.api.ServerAPI
 import com.example.second34_2.data.*
@@ -53,6 +54,8 @@ class FacultyRepository private constructor() {
     private var myServerAPI: ServerAPI? = null
 
     private fun getAPI() {
+        val IP = "192.168.0.105"
+        val PORT = 5050
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
 
@@ -63,17 +66,21 @@ class FacultyRepository private constructor() {
             .addInterceptor(interceptor)
             .build()
         try {
-            val url = "192.168.0.105:5050"
+            val url = "$IP:$PORT"
             Retrofit.Builder()
-                .baseUrl("http://${url}/")
+                .baseUrl("http://${url}/university/")
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build().apply {
                     myServerAPI = create(ServerAPI::class.java)
                 }
         } catch (e: Exception) {
-            Log.d("EX", "Возникло исключение $e")
+            Log.d("EX", "Возникло исключение $e \n http://$IP:$PORT/university/")
         }
+    }
+
+    fun syncUniversity() {
+        getFaculty()
     }
 
     // *******************************************
@@ -113,30 +120,29 @@ class FacultyRepository private constructor() {
         loadUniversity()
     }
 
-    fun getFaculty() {
+    private fun getFaculty() {
         if (myServerAPI == null)
             getAPI()
         if (myServerAPI != null) {
             val request = myServerAPI!!.getFaculty()
-            request.enqueue(object : Callback<Faculties> {
-                override fun onFailure(call: Call<Faculties>, t: Throwable) {
+            request.enqueue(object : Callback<List<Faculty>> {
+                override fun onFailure(call: Call<List<Faculty>>, t: Throwable) {
                     Log.d(TAG, "Ошибка получения истории факультетов", t)
                 }
 
                 override fun onResponse(
-                    call: Call<Faculties>,
-                    response: Response<Faculties>
+                    call: Call<List<Faculty>>,
+                    response: Response<List<Faculty>>
                 ) {
                     Log.e(TAG, "Получение истории факультетов")
                     val faculties = response.body()
-                    val facultyList = faculties?.items
                     CoroutineScope(Dispatchers.IO).launch {
                         val job = CoroutineScope(Dispatchers.IO).launch {
                             universityDao.deleteAllFaculty()
                         }
                         job.join()
-                        if (facultyList != null) {
-                            for (f in facultyList) {
+                        if (faculties != null) {
+                            for (f in faculties) {
                                 universityDao.insertNewFaculty(f)
                             }
                         }

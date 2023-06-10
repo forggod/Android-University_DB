@@ -1,6 +1,7 @@
 package com.example.second34_2.data
 
 import androidx.room.*
+import com.google.gson.annotations.SerializedName
 
 @Entity(
     indices = [Index("last_name", "first_name", "middle_name")],
@@ -22,3 +23,8 @@ data class Student(
     @ColumnInfo(name = "birth_date") val birthDate: Long?,
     @ColumnInfo(name = "group_id") val groupId: Int,
 )
+
+class Students {
+    @SerializedName("students")
+    lateinit var students: List<Faculty>
+}

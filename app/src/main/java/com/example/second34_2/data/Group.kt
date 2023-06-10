@@ -2,6 +2,7 @@ package com.example.second34_2.data
 
 import androidx.room.*
 import androidx.room.ForeignKey.Companion.CASCADE
+import com.google.gson.annotations.SerializedName
 
 @Entity(
     tableName = "faculty",
@@ -21,3 +22,8 @@ data class Group(
     @ColumnInfo(name = "group_name") val name: String?,
     @ColumnInfo(name = "faculty_id") val facultyID: Int,
 )
+
+class Groups {
+    @SerializedName("groups")
+    lateinit var groups: List<Faculty>
+}
