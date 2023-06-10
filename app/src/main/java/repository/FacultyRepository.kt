@@ -4,7 +4,6 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.room.Room
 import androidx.lifecycle.MutableLiveData
-import com.example.second34_2.R
 import com.example.second34_2.Second34_2Application
 import com.example.second34_2.api.ServerAPI
 import com.example.second34_2.data.*
@@ -80,7 +79,23 @@ class FacultyRepository private constructor() {
     }
 
     fun syncUniversity() {
-        getFaculty()
+        getFaculties()
+        getGroups()
+    }
+
+    fun syncPost() {
+        postFaculties()
+        postGroups()
+    }
+
+    suspend fun loadUniversity() {
+        Log.d("GET_FAC", "GET list of faculties")
+        withContext(Dispatchers.IO) {
+            university.postValue(universityDao.loadFaculty())
+        }
+        withContext(Dispatchers.IO) {
+            faculty.postValue(universityDao.loadGroup())
+        }
     }
 
     // *******************************************
@@ -95,14 +110,7 @@ class FacultyRepository private constructor() {
         loadUniversity()
     }
 
-    suspend fun loadUniversity() {
-        Log.d("GET_FAC", "GET list of faculties")
-        withContext(Dispatchers.IO) {
-            university.postValue(universityDao.loadFaculty())
-        }
-    }
-
-    suspend fun getFaculty(facultyId: Int): Faculty? {
+    suspend fun getFaculties(facultyId: Int): Faculty? {
         var f: Faculty? = null
         val job = CoroutineScope(Dispatchers.IO).launch {
             f = universityDao.getFaculty(facultyId)
@@ -120,7 +128,7 @@ class FacultyRepository private constructor() {
         loadUniversity()
     }
 
-    private fun getFaculty() {
+    private fun getFaculties() {
         if (myServerAPI == null)
             getAPI()
         if (myServerAPI != null) {
@@ -153,7 +161,7 @@ class FacultyRepository private constructor() {
         }
     }
 
-    fun postFaculty() {
+    private fun postFaculties() {
         if (myServerAPI == null)
             getAPI()
         if (myServerAPI != null) {
@@ -170,7 +178,6 @@ class FacultyRepository private constructor() {
                         response: Response<Faculties>
                     ) {
                         Log.e(TAG, "Отправка истории факультетов")
-                        // TODO: something
                     }
                 })
             }
@@ -193,6 +200,62 @@ class FacultyRepository private constructor() {
         Log.d("GET_GRP", "GET group list")
         withContext(Dispatchers.IO) {
             faculty.postValue(universityDao.loadFacultyGroups(facultyId))
+        }
+    }
+
+    private fun getGroups() {
+        if (myServerAPI == null)
+            getAPI()
+        if (myServerAPI != null) {
+            val request = myServerAPI!!.getGroups()
+            request.enqueue(object : Callback<List<Group>> {
+                override fun onFailure(call: Call<List<Group>>, t: Throwable) {
+                    Log.d(TAG, "Ошибка получения истории групп", t)
+                }
+
+                override fun onResponse(
+                    call: Call<List<Group>>,
+                    response: Response<List<Group>>
+                ) {
+                    Log.e(TAG, "Получение истории групп")
+                    val faculties = response.body()
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val job = CoroutineScope(Dispatchers.IO).launch {
+                            universityDao.deleteAllGroups()
+                        }
+                        job.join()
+                        if (faculties != null) {
+                            for (f in faculties) {
+                                universityDao.insertNewGroup(f)
+                            }
+                        }
+                        loadUniversity()
+                    }
+                }
+            })
+        }
+    }
+
+    private fun postGroups() {
+        if (myServerAPI == null)
+            getAPI()
+        if (myServerAPI != null) {
+            CoroutineScope(Dispatchers.IO).launch {
+                val request = myServerAPI!!.postGroups(universityDao.loadGroup())
+                request.enqueue(object : Callback<Groups> {
+
+                    override fun onFailure(call: Call<Groups>, t: Throwable) {
+                        Log.d(TAG, "Ошибка отправки истории групп", t)
+                    }
+
+                    override fun onResponse(
+                        call: Call<Groups>,
+                        response: Response<Groups>
+                    ) {
+                        Log.e(TAG, "Отправка истории групп")
+                    }
+                })
+            }
         }
     }
 

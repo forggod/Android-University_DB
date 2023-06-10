@@ -7,7 +7,6 @@ import com.example.second34_2.data.Faculty
 import com.example.second34_2.data.Group
 import kotlinx.coroutines.launch
 import repository.FacultyRepository
-import java.util.UUID
 
 class FacultyGroupViewModel : ViewModel() {
     var faculty: MutableLiveData<List<Group>> = MutableLiveData()
@@ -30,7 +29,7 @@ class FacultyGroupViewModel : ViewModel() {
     suspend fun getFaculty(): Faculty? {
         var f: Faculty? = null
         val job = viewModelScope.launch {
-            f = FacultyRepository.get().getFaculty(_facultyID)
+            f = FacultyRepository.get().getFaculties(_facultyID)
         }
         job.join()
         return f

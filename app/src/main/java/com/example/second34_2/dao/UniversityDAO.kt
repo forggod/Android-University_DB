@@ -51,6 +51,8 @@ interface UniversityDAO {
 
     @Update(entity = Group::class)
     fun updateGroup(group: Group)
+    @Query("DELETE FROM faculty")
+    fun deleteAllGroups()
 
     // *******************************************
     //              About Student
