@@ -54,7 +54,7 @@ class FacultyRepository private constructor() {
     private var myServerAPI: ServerAPI? = null
 
     private fun getAPI() {
-        val IP = "192.168.0.105"
+        val IP = "192.168.0.107"
         val PORT = 5050
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
@@ -75,7 +75,7 @@ class FacultyRepository private constructor() {
                     myServerAPI = create(ServerAPI::class.java)
                 }
         } catch (e: Exception) {
-            Log.d("EX", "Возникло исключение $e \n http://$IP:$PORT/university/")
+            Log.e("EX", "Возникло исключение $e \n http://$IP:$PORT/university/")
         }
     }
 
@@ -86,6 +86,7 @@ class FacultyRepository private constructor() {
     fun syncPost() {
         postFaculties()
         postGroups()
+        postStudents()
     }
 
     suspend fun loadUniversity() {
@@ -105,14 +106,14 @@ class FacultyRepository private constructor() {
             val requestFaculty = myServerAPI!!.getFaculty()
             requestFaculty.enqueue(object : Callback<List<Faculty>> {
                 override fun onFailure(call: Call<List<Faculty>>, t: Throwable) {
-                    Log.d(TAG, "Ошибка получения истории факультета", t)
+                    Log.e(TAG, "Ошибка получения истории факультета", t)
                 }
 
                 override fun onResponse(
                     call: Call<List<Faculty>>,
                     response: Response<List<Faculty>>
                 ) {
-                    Log.e(TAG, "Получение истории факультета")
+                    Log.d(TAG, "Получение истории факультета")
                     val facultiesList = response.body()
                     CoroutineScope(Dispatchers.IO).launch {
                         universityDao.deleteAllFaculty()
@@ -128,14 +129,14 @@ class FacultyRepository private constructor() {
             val requestGroups = myServerAPI!!.getGroups()
             requestGroups.enqueue(object : Callback<List<Group>> {
                 override fun onFailure(call: Call<List<Group>>, t: Throwable) {
-                    Log.d(TAG, "Ошибка получения истории групп", t)
+                    Log.e(TAG, "Ошибка получения истории групп", t)
                 }
 
                 override fun onResponse(
                     call: Call<List<Group>>,
                     response: Response<List<Group>>
                 ) {
-                    Log.e(TAG, "Получение истории групп")
+                    Log.d(TAG, "Получение истории групп")
                     val groupsList = response.body()
                     CoroutineScope(Dispatchers.IO).launch {
                         delay(500)
@@ -143,6 +144,30 @@ class FacultyRepository private constructor() {
                         if (groupsList != null) {
                             for (f in groupsList) {
                                 universityDao.insertNewGroup(f)
+                            }
+                        }
+                        loadUniversity()
+                    }
+                }
+            })
+            val requestStudents = myServerAPI!!.getStudents()
+            requestStudents.enqueue(object : Callback<List<Student>> {
+                override fun onFailure(call: Call<List<Student>>, t: Throwable) {
+                    Log.e(TAG, "Ошибка получения истории студентов", t)
+                }
+
+                override fun onResponse(
+                    call: Call<List<Student>>,
+                    response: Response<List<Student>>
+                ) {
+                    Log.d(TAG, "Получение истории студентов")
+                    val studentsList = response.body()
+                    CoroutineScope(Dispatchers.IO).launch {
+                        delay(1000)
+                        universityDao.deleteAllStudents()
+                        if (studentsList != null) {
+                            for (f in studentsList) {
+                                universityDao.insertNewStudent(f)
                             }
                         }
                         loadUniversity()
@@ -191,14 +216,14 @@ class FacultyRepository private constructor() {
                 request.enqueue(object : Callback<Faculties> {
 
                     override fun onFailure(call: Call<Faculties>, t: Throwable) {
-                        Log.d(TAG, "Ошибка отправки истории факультетов", t)
+                        Log.e(TAG, "Ошибка отправки истории факультетов", t)
                     }
 
                     override fun onResponse(
                         call: Call<Faculties>,
                         response: Response<Faculties>
                     ) {
-                        Log.e(TAG, "Отправка истории факультетов")
+                        Log.d(TAG, "Отправка истории факультетов")
                     }
                 })
             }
@@ -233,14 +258,14 @@ class FacultyRepository private constructor() {
                 request.enqueue(object : Callback<Groups> {
 
                     override fun onFailure(call: Call<Groups>, t: Throwable) {
-                        Log.d(TAG, "Ошибка отправки истории групп", t)
+                        Log.e(TAG, "Ошибка отправки истории групп", t)
                     }
 
                     override fun onResponse(
                         call: Call<Groups>,
                         response: Response<Groups>
                     ) {
-                        Log.e(TAG, "Отправка истории групп")
+                        Log.d(TAG, "Отправка истории групп")
                     }
                 })
             }
@@ -307,6 +332,29 @@ class FacultyRepository private constructor() {
         )
         withContext(Dispatchers.IO) {
             student.id?.let { universityDao.deleteStudentByID(it) }
+        }
+    }
+
+    private fun postStudents() {
+        if (myServerAPI == null)
+            getAPI()
+        if (myServerAPI != null) {
+            CoroutineScope(Dispatchers.IO).launch {
+                val request = myServerAPI!!.postStudents(universityDao.loadStudent())
+                request.enqueue(object : Callback<Students> {
+
+                    override fun onFailure(call: Call<Students>, t: Throwable) {
+                        Log.e(TAG, "Ошибка отправки истории студентов", t)
+                    }
+
+                    override fun onResponse(
+                        call: Call<Students>,
+                        response: Response<Students>
+                    ) {
+                        Log.d(TAG, "Отправка истории студентов")
+                    }
+                })
+            }
         }
     }
 }
