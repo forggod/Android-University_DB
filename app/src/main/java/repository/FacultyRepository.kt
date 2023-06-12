@@ -89,6 +89,63 @@ class FacultyRepository private constructor() {
         postStudents()
     }
 
+    fun deleteSFaculty(id: Int) {
+        if (myServerAPI == null)
+            getAPI()
+        if (myServerAPI != null) {
+            CoroutineScope(Dispatchers.IO).launch {
+                val request = myServerAPI!!.deleteFaculty(id)
+                request.enqueue(object : Callback<Faculty> {
+                    override fun onFailure(call: Call<Faculty>, t: Throwable) {
+                        Log.e(TAG, "Ошибка удаления факультета", t)
+                    }
+
+                    override fun onResponse(call: Call<Faculty>, response: Response<Faculty>) {
+                        Log.d(TAG, "Отправка запроса на удаление факультета")
+                    }
+                })
+            }
+        }
+    }
+
+    fun deleteSGroup(id: Int) {
+        if (myServerAPI == null)
+            getAPI()
+        if (myServerAPI != null) {
+            CoroutineScope(Dispatchers.IO).launch {
+                val request = myServerAPI!!.deleteGroup(id)
+                request.enqueue(object : Callback<Group> {
+                    override fun onFailure(call: Call<Group>, t: Throwable) {
+                        Log.e(TAG, "Ошибка удаления факультета", t)
+                    }
+
+                    override fun onResponse(call: Call<Group>, response: Response<Group>) {
+                        Log.d(TAG, "Отправка запроса на удаление факультета")
+                    }
+                })
+            }
+        }
+    }
+
+    fun deleteSStudent(id: Int) {
+        if (myServerAPI == null)
+            getAPI()
+        if (myServerAPI != null) {
+            CoroutineScope(Dispatchers.IO).launch {
+                val request = myServerAPI!!.deleteStudent(id)
+                request.enqueue(object : Callback<Student> {
+                    override fun onFailure(call: Call<Student>, t: Throwable) {
+                        Log.e(TAG, "Ошибка удаления факультета", t)
+                    }
+
+                    override fun onResponse(call: Call<Student>, response: Response<Student>) {
+                        Log.d(TAG, "Отправка запроса на удаление факультета")
+                    }
+                })
+            }
+        }
+    }
+
     suspend fun loadUniversity() {
         Log.d("GET_FAC", "GET list of faculties")
         withContext(Dispatchers.IO) {
@@ -194,6 +251,7 @@ class FacultyRepository private constructor() {
         Log.d("DEL_FAC", "Delete faculty with id $facultyId")
         withContext(Dispatchers.IO) {
             universityDao.deleteFacultyByID(facultyId)
+            deleteSFaculty(facultyId)
         }
         loadUniversity()
     }
@@ -238,6 +296,18 @@ class FacultyRepository private constructor() {
         withContext(Dispatchers.IO) {
             faculty.postValue(universityDao.loadFacultyGroups(facultyId))
         }
+    }
+
+    suspend fun deleteGroup(group: Group) {
+        Log.d(
+            "DEL_STD",
+            "ID = ${group.id} Name = ${group.name} FacultyID = ${group.facultyID}"
+        )
+        withContext(Dispatchers.IO) {
+            group.id?.let { universityDao.deleteGroupByID(it) }
+            group.id?.let { deleteSGroup(it) }
+        }
+        loadFacultyGroups(group.facultyID)
     }
 
     private fun postGroups() {
@@ -323,6 +393,7 @@ class FacultyRepository private constructor() {
         )
         withContext(Dispatchers.IO) {
             student.id?.let { universityDao.deleteStudentByID(it) }
+            student.id?.let { deleteSStudent(it) }
         }
     }
 
