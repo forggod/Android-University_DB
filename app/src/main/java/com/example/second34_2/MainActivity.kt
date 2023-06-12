@@ -66,27 +66,20 @@ class MainActivity : AppCompatActivity(), FacultyFragment.Callbacks, GroupList.C
                 true
             }
 
-            R.id.miSync -> {
-                val myFragment = supportFragmentManager.findFragmentByTag(GROUP_TAG)
-                if (myFragment == null)
-                    if (!dt) {
-                        dt = true
-                        FacultyRepository.get().syncUniversity()
-                    }
-                timer.schedule(object : TimerTask() {
-                    override fun run() {
-                        dt = false
-                    }
-                }, delay.toLong())
-                true
-            }
-
-            R.id.miPost -> {
-                val myFragment = supportFragmentManager.findFragmentByTag(GROUP_TAG)
-                if (myFragment == null)
-                    FacultyRepository.get().syncPost()
-                true
-            }
+//            R.id.miSync -> {
+//                val myFragment = supportFragmentManager.findFragmentByTag(GROUP_TAG)
+//                if (myFragment == null)
+//                    if (!dt) {
+//                        dt = true
+//                        FacultyRepository.get().syncUniversity()
+//                    }
+//                timer.schedule(object : TimerTask() {
+//                    override fun run() {
+//                        dt = false
+//                    }
+//                }, delay.toLong())
+//                true
+//            }
 
             else -> return super.onOptionsItemSelected(item)
         }
@@ -159,6 +152,7 @@ class MainActivity : AppCompatActivity(), FacultyFragment.Callbacks, GroupList.C
 
     override fun onStart() {
         super.onStart()
+        FacultyRepository.get().syncUniversity()
         CoroutineScope(Dispatchers.Main).launch {
             FacultyRepository.get().loadUniversity()
         }

@@ -9,20 +9,4 @@
         android:title="@string/new_el"
         app:showAsAction="always"
         tools:ignore="HardcodedText" />
-    <item
-        android:id="@+id/miSync"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:icon="@android:drawable/ic_popup_sync"
-        android:title="@string/new_el"
-        app:showAsAction="always"
-        tools:ignore="HardcodedText" />
-    <item
-        android:id="@+id/miPost"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:icon="@android:drawable/ic_menu_upload"
-        android:title="@string/new_el"
-        app:showAsAction="always"
-        tools:ignore="HardcodedText" />
 </menu>
