@@ -2,6 +2,7 @@ package com.example.second34_2
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -17,6 +18,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import repository.FacultyRepository
+import java.util.Timer
+import java.util.TimerTask
 
 class MainActivity : AppCompatActivity(), FacultyFragment.Callbacks, GroupList.Callbacks,
     GroupFragment.Callbacks {
@@ -48,6 +51,10 @@ class MainActivity : AppCompatActivity(), FacultyFragment.Callbacks, GroupList.C
         return true
     }
 
+    private val delay = 5000
+    private val timer = Timer()
+    private var dt = false
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.miNewFaculty -> {
@@ -58,13 +65,23 @@ class MainActivity : AppCompatActivity(), FacultyFragment.Callbacks, GroupList.C
                     showNameInputDialog(1)
                 true
             }
-            R.id.miSync ->{
+
+            R.id.miSync -> {
                 val myFragment = supportFragmentManager.findFragmentByTag(GROUP_TAG)
                 if (myFragment == null)
-                    FacultyRepository.get().syncUniversity()
+                    if (!dt) {
+                        dt = true
+                        FacultyRepository.get().syncUniversity()
+                    }
+                timer.schedule(object : TimerTask() {
+                    override fun run() {
+                        dt = false
+                    }
+                }, delay.toLong())
                 true
             }
-            R.id.miPost ->{
+
+            R.id.miPost -> {
                 val myFragment = supportFragmentManager.findFragmentByTag(GROUP_TAG)
                 if (myFragment == null)
                     FacultyRepository.get().syncPost()

@@ -100,6 +100,9 @@ class FacultyRepository private constructor() {
     }
 
     private fun getUniversity() {
+        var listFaculty: List<Faculty>? = null
+        var listGroup: List<Group>? = null
+        var listStudent: List<Student>? = null
         if (myServerAPI == null)
             getAPI()
         if (myServerAPI != null) {
@@ -114,16 +117,7 @@ class FacultyRepository private constructor() {
                     response: Response<List<Faculty>>
                 ) {
                     Log.d(TAG, "Получение истории факультета")
-                    val facultiesList = response.body()
-                    CoroutineScope(Dispatchers.IO).launch {
-                        universityDao.deleteAllFaculty()
-                        if (facultiesList != null) {
-                            for (f in facultiesList) {
-                                universityDao.insertNewFaculty(f)
-                            }
-                        }
-                        loadUniversity()
-                    }
+                    listFaculty = response.body()
                 }
             })
             val requestGroups = myServerAPI!!.getGroups()
@@ -137,17 +131,7 @@ class FacultyRepository private constructor() {
                     response: Response<List<Group>>
                 ) {
                     Log.d(TAG, "Получение истории групп")
-                    val groupsList = response.body()
-                    CoroutineScope(Dispatchers.IO).launch {
-                        delay(500)
-                        universityDao.deleteAllGroups()
-                        if (groupsList != null) {
-                            for (f in groupsList) {
-                                universityDao.insertNewGroup(f)
-                            }
-                        }
-                        loadUniversity()
-                    }
+                    listGroup = response.body()
                 }
             })
             val requestStudents = myServerAPI!!.getStudents()
@@ -161,19 +145,26 @@ class FacultyRepository private constructor() {
                     response: Response<List<Student>>
                 ) {
                     Log.d(TAG, "Получение истории студентов")
-                    val studentsList = response.body()
-                    CoroutineScope(Dispatchers.IO).launch {
-                        delay(1000)
-                        universityDao.deleteAllStudents()
-                        if (studentsList != null) {
-                            for (f in studentsList) {
-                                universityDao.insertNewStudent(f)
-                            }
-                        }
-                        loadUniversity()
-                    }
+                    listStudent = response.body()
                 }
             })
+            CoroutineScope(Dispatchers.IO).launch {
+                delay(500)
+                if (listFaculty != null) {
+                    universityDao.deleteAllFaculty()
+                    for (f in listFaculty!!)
+                        universityDao.insertNewFaculty(f)
+                    if (listGroup != null) {
+                        for (f in listGroup!!)
+                            universityDao.insertNewGroup(f)
+                        if (listStudent != null) {
+                            for (f in listStudent!!)
+                                universityDao.insertNewStudent(f)
+                        }
+                    }
+                    loadUniversity()
+                }
+            }
         }
     }
 
